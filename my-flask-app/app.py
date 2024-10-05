@@ -30,41 +30,50 @@ if uploaded_file:
 
     # Select columns for the chart based on chart type
     if chart_type == 'Pie Chart':
+        # For Pie Chart, select only one column (must be categorical)
         selected_column = st.selectbox("Select Column for Pie Chart", df.columns.tolist())
     else:
-        selected_columns = st.multiselect("Select Columns for Visualization", df.columns.tolist(), default=df.columns.tolist())
+        # Filter numeric columns for charts that require numerical data
+        numeric_columns = df.select_dtypes(include=['float64', 'int64']).columns.tolist()
+
+        if not numeric_columns:
+            st.error("No numeric columns found in the dataset. Please upload a dataset with numeric data.")
+        else:
+            selected_columns = st.multiselect("Select Columns for Visualization", numeric_columns)
 
     # Generate the selected chart
-    st.write(f"### {chart_type} for selected columns")
-    fig, ax = plt.subplots()
+    if chart_type != 'Pie Chart' and selected_columns:
+        st.write(f"### {chart_type} for selected columns")
+        fig, ax = plt.subplots()
 
-    if chart_type == 'Bar Chart':
-        df[selected_columns].plot(kind='bar', ax=ax)
-    elif chart_type == 'Line Chart':
-        df[selected_columns].plot(kind='line', ax=ax)
-    elif chart_type == 'Scatter Plot':
-        if len(selected_columns) == 2:
-            df.plot(kind='scatter', x=selected_columns[0], y=selected_columns[1], ax=ax)
-        else:
-            st.error("Scatter plot requires exactly two columns.")
+        if chart_type == 'Bar Chart':
+            df[selected_columns].plot(kind='bar', ax=ax)
+        elif chart_type == 'Line Chart':
+            df[selected_columns].plot(kind='line', ax=ax)
+        elif chart_type == 'Scatter Plot':
+            if len(selected_columns) == 2:
+                df.plot(kind='scatter', x=selected_columns[0], y=selected_columns[1], ax=ax)
+            else:
+                st.error("Scatter plot requires exactly two numeric columns.")
+        elif chart_type == 'Histogram':
+            df[selected_columns].plot(kind='hist', ax=ax, bins=10)
+
+        st.pyplot(fig)
+
     elif chart_type == 'Pie Chart':
-        if len(selected_column) == 1:
-            df[selected_column].value_counts().plot(kind='pie', ax=ax, autopct='%1.1f%%')
-        else:
-            st.error("Pie chart requires exactly one column.")
-    elif chart_type == 'Histogram':
-        df[selected_columns].plot(kind='hist', ax=ax, bins=10)
-
-    # Display the chart
-    st.pyplot(fig)
+        # Generate Pie Chart for one selected categorical column
+        if selected_column:
+            df[selected_column].value_counts().plot(kind='pie', ax=plt.gca(), autopct='%1.1f%%')
+            st.pyplot(plt)
 
     # Display insights or analysis
     st.write("### Insights:")
     st.write(f"- Total number of rows: {df.shape[0]}")
     st.write(f"- Total number of columns: {df.shape[1]}")
-    st.write(f"- Basic statistics for selected columns:")
-    if chart_type != 'Pie Chart':
+    st.write(f"- Basic statistics for selected numeric columns:")
+    if chart_type != 'Pie Chart' and selected_columns:
         st.write(df[selected_columns].describe())
+
 
 
 
