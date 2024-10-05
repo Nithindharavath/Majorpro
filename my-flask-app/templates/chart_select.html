@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Charts</title>
+</head>
+<body>
+    <h1>Select Chart Types</h1>
+    <form method="POST">
+        <h3>Chart Types</h3>
+        <input type="checkbox" name="chart_types" value="bar"> Bar Chart<br>
+        <input type="checkbox" name="chart_types" value="line"> Line Chart<br>
+        <input type="checkbox" name="chart_types" value="scatter"> Scatter Plot<br>
+        
+        <h3>Select Fields (optional)</h3>
+        {% for column in columns %}
+            <input type="checkbox" name="columns" value="{{ column }}">{{ column }}<br>
+        {% endfor %}
+        
+        <button type="submit">Generate Charts</button>
+    </form>
+</body>
+</html>
