@@ -28,6 +28,10 @@ if uploaded_file:
     # Select chart type
     chart_type = st.selectbox("Select Chart Type", ["Bar Chart", "Line Chart", "Scatter Plot", "Pie Chart", "Histogram"])
 
+    # Initialize selected_columns and selected_column to avoid NameError
+    selected_columns = []
+    selected_column = ""
+
     # Select columns for the chart based on chart type
     if chart_type == 'Pie Chart':
         # For Pie Chart, select only one column (must be categorical)
