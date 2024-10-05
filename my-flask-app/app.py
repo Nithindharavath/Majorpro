@@ -5,7 +5,7 @@ import os
 
 # Set up folder for file uploads
 UPLOAD_FOLDER = 'uploads'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # This creates the uploads folder if it doesn't exist
 
 st.title("Data Visualization App")
 
@@ -20,7 +20,10 @@ if uploaded_file:
     
     # Read the Excel file
     df = pd.read_excel(filepath)
-    st.write("### Preview of the Dataset", df)
+
+    # Display a preview of the dataset
+    st.write("### Preview of the Dataset")
+    st.dataframe(df)  # This will show the dataset in an interactive table
 
     # Select columns for the chart
     selected_columns = st.multiselect("Select Columns to Visualize", df.columns.tolist(), default=df.columns.tolist())
@@ -52,5 +55,6 @@ if uploaded_file:
         st.write(f"- Total number of columns: {df.shape[1]}")
         st.write(f"- Basic statistics for selected columns:")
         st.write(df[selected_columns].describe())
+
 
 
